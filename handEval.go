@@ -19,7 +19,6 @@ var p = fmt.Println
 type CardSlice [7]Card
 
 func (c CardSlice) String() string {
-	// [{7 0} {6 0} {5 0} {4 0} {3 0} {2 0} {1 0}]
 
 	s := ""
 
@@ -96,22 +95,16 @@ func newDeck() []Card {
 
 func HandEval(cards []int) []int {
 
-	//var int handValue  // the desired result
 	c := sliceToCards(cards)
 
-	// fmt.Println("sliceToCards", c)
-	//fmt.Println("cards", cards)
 	sort.Sort(ByRank(c))
-	// fmt.Println("after sorting", c)
 
 	a := [7]Card{}
 	copy(a[:], c)
 
-	//fmt.Println("before sorting", c)
 	sort.Sort(BySuit(c))
 	sf := [7]Card{}
 	copy(sf[:], c)
-	//fmt.Println("after sorting", s)
 
 	if result := StraightFlush(sf); result != nil {
 
@@ -249,32 +242,20 @@ func fullHouse(c [7]Card) []int {
 		}
 	}
 
-	//p("remaining", remaining, set)
 	// find the pair
 	if len(set) > 1 {
 		for i := 0; i < 3; i++ {
 			if remaining[i].rank == remaining[i+1].rank {
-				//p("full house yo")
 				return append(set, remaining[i].rank, remaining[i+1].rank)
 			}
 		}
-		//p("remaining", remaining)
 	}
-
-	//p("from end of boat", c)
 
 	return nil
 }
 
 // 5
 func flush(c [7]Card) []int {
-
-	// searchIn := CardSlice(c).String()
-	// cards := s.Split(searchIn, "#")
-	// ranks := cards[0]
-	// suits := cards[1]
-
-	//p("from flush", c, ranks, suits)
 
 	clubs := make([]int, 1, 6)
 	diamonds := make([]int, 1, 6)
@@ -471,13 +452,13 @@ func sliceToCards(cards []int) []Card {
 	return c
 }
 
-type WinnerReply struct {
+type winnerReply struct {
 	PIndex int
 	Type   string
 	Hand   []int
 }
 
-func Winner(p1 []int, p2 []int) WinnerReply {
+func Winner(p1 []int, p2 []int) winnerReply {
 	one := HandEval(p1)
 	two := HandEval(p2)
 
@@ -495,88 +476,14 @@ func Winner(p1 []int, p2 []int) WinnerReply {
 
 	if winner == 0 {
 
-		return WinnerReply{0, "", one}
+		return winnerReply{0, "", one}
 
 	} else if winner == 1 {
 
-		return WinnerReply{1, "", two}
+		return winnerReply{1, "", two}
 
 	} else {
 
-		return WinnerReply{-1, "", []int{}}
-
+		return winnerReply{-1, "", []int{}}
 	}
-}
-
-const (
-	CLUBS = iota
-	DIAMONDS
-	HEARTS
-	SPADES
-)
-
-func cardValToStr(r int) string {
-	switch {
-	case r == 0:
-		return "2"
-	case r == 1:
-		return "3"
-	case r == 2:
-		return "4"
-	case r == 3:
-		return "5"
-	case r == 4:
-		return "6"
-	case r == 5:
-		return "7"
-	case r == 6:
-		return "8"
-	case r == 7:
-		return "9"
-	case r == 8:
-		return "10"
-	case r == 9:
-		return "J"
-	case r == 10:
-		return "Q"
-	case r == 11:
-		return "K"
-	case r == 12:
-		return "A"
-	}
-	return fmt.Sprintf("%d", r)
-}
-
-func suitToStr(s int) string {
-	switch {
-	case s == CLUBS:
-		return "♣"
-	case s == DIAMONDS:
-		return "♦"
-	case s == HEARTS:
-		return "♥"
-	case s == SPADES:
-		return "♠"
-	}
-	panic(fmt.Sprintf("invalid suit %d", s))
-}
-
-func CardToStr(c []int) string {
-	str := ""
-	suit := -1
-
-	for _, item := range c {
-		if item <= 12 {
-			suit = 0
-		} else if item <= 25 {
-			suit = 1
-		} else if item <= 38 {
-			suit = 2
-		} else if item <= 51 {
-			suit = 3
-		}
-		str += cardValToStr(item%13) + suitToStr(suit) + " "
-	}
-
-	return str
 }
