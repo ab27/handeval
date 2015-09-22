@@ -326,8 +326,8 @@ func straight(c [7]Card) []int {
 	// highest card of the straight
 	h := 12
 
-	sRanks := []string{"CBA98", "BA987", "A9876", "98765", "87654",
-		"76543", "65432", "54321", "43210"}
+	sRanks := []string{"CBA98", "BA987", "A9876", "98765",
+		"87654", "76543", "65432", "54321", "43210"}
 
 	for i := 0; i < len(sRanks); i++ {
 		if index := s.Index(ranks, sRanks[i]); index != -1 {
@@ -340,7 +340,7 @@ func straight(c [7]Card) []int {
 	// check for a wheel
 	if s.Index(ranks, "3210") != -1 && s.Index(ranks, "C") != -1 {
 		//p("wheel")
-		return []int{4, 3, 2, 1, 0}
+		return []int{4, 4, 3, 2, 1, 0}
 	}
 
 	return nil

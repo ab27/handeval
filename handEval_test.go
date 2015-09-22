@@ -83,17 +83,17 @@ var straightTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c Ad 5c 4c 3d 6h Qc
 		in:  []int{0, 25, 3, 2, 14, 30, 10},
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{4, 4, 3, 2, 1, 0},
 	},
-	{
+	{ // 2c Ad 5c 4c 3d 9h Qc
 		in:  []int{0, 25, 3, 2, 14, 33, 10}, // wheel
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{4, 4, 3, 2, 1, 0},
 	},
-	{
+	{ // Ac Kd Qh Js Th 2s 3s
 		in:  []int{12, 24, 36, 48, 34, 39, 40}, // Ace high straight
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{4, 12, 11, 10, 9, 8},
 	},
 }
 
@@ -102,9 +102,9 @@ var setTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c 2d 6h 9s Th Ac 2s
 		in:  []int{0, 13, 30, 46, 34, 12, 39},
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{3, 0, 0, 0, 12, 8},
 	},
 }
 
@@ -124,9 +124,9 @@ var pairTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c 2d 6h 9s Th Ac Jc
 		in:  []int{0, 13, 30, 46, 34, 12, 9},
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{1, 0, 0, 12, 9, 8},
 	},
 }
 
@@ -135,9 +135,9 @@ var highCardTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c 4d 6h 9s Th Ac Jc
 		in:  []int{0, 15, 30, 46, 34, 12, 9},
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{0, 12, 9, 8, 7, 4},
 	},
 }
 
@@ -198,6 +198,34 @@ func TestFlush(t *testing.T) {
 	}
 }
 
+func TestStraight(t *testing.T) {
+	for _, test := range straightTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := straight(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("straight(%v)? got %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestSet(t *testing.T) {
+	for _, test := range setTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := set(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("set(%v)? got %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
 func TestTwoPair(t *testing.T) {
 	for _, test := range tpTests {
 		card := sliceToCards(test.in)
@@ -208,6 +236,34 @@ func TestTwoPair(t *testing.T) {
 		//t.Log("card", card, test.in)
 		if x := twoPair(s); x == nil || x[0] != test.out[0] {
 			t.Errorf("twoPair(%v) = %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestPair(t *testing.T) {
+	for _, test := range pairTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := pair(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("pair(%v)? got %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestHighCard(t *testing.T) {
+	for _, test := range highCardTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := highCard(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("highCard(%v)? got %v, want %v", test.in, x, test.out)
 		}
 	}
 }
