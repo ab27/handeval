@@ -252,7 +252,7 @@ func fourOfaKind(c [7]Card) []int {
 
 // 6
 func fullHouse(c [7]Card) []int {
-	//p("from boat", c)
+	// p("from boat", c)
 	set := []int{6}
 	remaining := []Card{}
 

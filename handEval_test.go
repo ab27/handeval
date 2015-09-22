@@ -14,9 +14,9 @@ import "sort"
 // 7  20  33  46   7  9
 // 8  21  34  47   8  T
 // 9  22  35  48   9  J
-// 10 23  36  49   A  Q
-// 11 24  37  50   B  K
-// 12 25  38  51   C  A
+// 10 23  36  49   10 Q
+// 11 24  37  50   11 K
+// 12 25  38  51   12 A
 
 // tests for straight-flush
 var sfTests = []struct {
@@ -52,7 +52,7 @@ var fourOfaKindTests = []struct {
 }{
 	{ // 2c 2d  6h  2h  Th  Ac  2s
 		in:  []int{0, 13, 30, 26, 34, 12, 39},
-		out: []int{7, 2, 2, 2, 2, 12},
+		out: []int{7, 0, 0, 0, 0, 12},
 	},
 }
 
@@ -61,9 +61,9 @@ var fullHouseTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c 2d Ad 9s Th Ac 2s
 		in:  []int{0, 13, 25, 46, 34, 12, 39},
-		out: []int{7, 6, 6, 3, 3, 11},
+		out: []int{6, 0, 0, 0, 12, 12},
 	},
 }
 
@@ -72,9 +72,9 @@ var flushTests = []struct {
 	in  []int
 	out []int
 }{
-	{
+	{ // 2c 2d 4d 7d 9d Ad 8s
 		in:  []int{0, 13, 15, 18, 20, 25, 45},
-		out: []int{2, 6, 6, 3, 3, 11},
+		out: []int{5, 12, 7, 5, 2, 0},
 	},
 }
 
@@ -166,6 +166,34 @@ func TestFourOfaKind(t *testing.T) {
 		//t.Log("card", card, test.in)
 		if x := fourOfaKind(s); x == nil || x[0] != test.out[0] {
 			t.Errorf("quads(%v)? got %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestFullHouse(t *testing.T) {
+	for _, test := range fullHouseTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := fullHouse(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("fullHouse(%v)? got %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestFlush(t *testing.T) {
+	for _, test := range flushTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := flush(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("flush(%v)? got %v, want %v", test.in, x, test.out)
 		}
 	}
 }
