@@ -18,6 +18,7 @@ import "sort"
 // 11 24  37  50   B  K
 // 12 25  38  51   C  A
 
+// tests for straight-flush
 var sfTests = []struct {
 	in  []int
 	out []int
@@ -34,9 +35,9 @@ var sfTests = []struct {
 		in:  []int{38, 49, 22, 29, 27, 26, 28}, //sf wheel
 		out: []int{8, 3, 2, 1, 0},
 	},
-	{
+	{ // 2c Ad  5c 4c 3c 6c Qc
 		in:  []int{0, 25, 3, 2, 1, 4, 10},
-		out: []int{8, 4, 3, 2, 1, 0},
+		out: []int{8, 4, 3, 2, 1, 0}, //6-high striaght flush
 	},
 	{
 		in:  []int{1, 23, 51, 48, 50, 49, 47},
@@ -44,6 +45,70 @@ var sfTests = []struct {
 	},
 }
 
+// tests for four of a kind
+var fourOfaKindTests = []struct {
+	in  []int
+	out []int
+}{
+	{ // 2c 2d  6h  2h  Th  Ac  2s
+		in:  []int{0, 13, 30, 26, 34, 12, 39},
+		out: []int{7, 2, 2, 2, 2, 12},
+	},
+}
+
+// tests for full house
+var fullHouseTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 13, 25, 46, 34, 12, 39},
+		out: []int{7, 6, 6, 3, 3, 11},
+	},
+}
+
+// tests for flush
+var flushTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 13, 15, 18, 20, 25, 45},
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+}
+
+// tests for straight
+var straightTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 25, 3, 2, 14, 30, 10},
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+	{
+		in:  []int{0, 25, 3, 2, 14, 33, 10}, // wheel
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+	{
+		in:  []int{12, 24, 36, 48, 34, 39, 40}, // Ace high straight
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+}
+
+// tests for three of a kind
+var setTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 13, 30, 46, 34, 12, 39},
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+}
+
+// tests for two-pair
 var tpTests = []struct {
 	in  []int
 	out []int
@@ -54,32 +119,27 @@ var tpTests = []struct {
 	},
 }
 
-// wheel
-// p(handEval.HandEval([]int{0, 25, 3, 2, 14, 33, 10}))
+// tests for 1 pair
+var pairTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 13, 30, 46, 34, 12, 9},
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+}
 
-// straight
-// p(handEval.HandEval([]int{0, 25, 3, 2, 14, 30, 10}))
-
-// // Ace high straight
-// p(handEval.HandEval([]int{12, 24, 36, 48, 34, 39, 40}))
-
-// // high card
-// p(handEval.HandEval([]int{0, 15, 30, 46, 34, 12, 9}))
-
-// // pair
-// p(handEval.HandEval([]int{0, 13, 30, 46, 34, 12, 9}))
-
-// // flush
-// p(handEval.HandEval([]int{0, 13, 15, 18, 20, 25, 45}))
-
-// // set
-// p(handEval.HandEval([]int{0, 13, 30, 46, 34, 12, 39}))
-
-// // quads
-// p(handEval.HandEval([]int{0, 13, 30, 26, 34, 12, 39}))
-
-// // fullhouse
-// p(handEval.HandEval([]int{0, 13, 25, 46, 34, 12, 39}))
+// tests for high card
+var highCardTests = []struct {
+	in  []int
+	out []int
+}{
+	{
+		in:  []int{0, 15, 30, 46, 34, 12, 9},
+		out: []int{2, 6, 6, 3, 3, 11},
+	},
+}
 
 func TestStraightFlush(t *testing.T) {
 	for _, test := range sfTests {
@@ -90,8 +150,22 @@ func TestStraightFlush(t *testing.T) {
 		copy(s[:], card)
 
 		//t.Log("card", card, test.in)
-		if x := StraightFlush(s); x == nil || x[0] != test.out[0] {
+		if x := straightFlush(s); x == nil || x[0] != test.out[0] {
 			t.Errorf("StraightFlush(%v) = %v, want %v", test.in, x, test.out)
+		}
+	}
+}
+
+func TestFourOfaKind(t *testing.T) {
+	for _, test := range fourOfaKindTests {
+		card := sliceToCards(test.in)
+		sort.Sort(ByRank(card))
+		s := [7]Card{}
+		copy(s[:], card)
+
+		//t.Log("card", card, test.in)
+		if x := fourOfaKind(s); x == nil || x[0] != test.out[0] {
+			t.Errorf("quads(%v)? got %v, want %v", test.in, x, test.out)
 		}
 	}
 }

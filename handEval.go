@@ -93,6 +93,28 @@ func newDeck() []Card {
 	return c
 }
 
+func sliceToCards(cards []int) []Card {
+	c := make([]Card, 7)
+	for i := 0; i < 7; i++ {
+		c[i] = unshuffled[cards[i]]
+	}
+
+	return c
+}
+
+// // a convinence function for calling HandEval
+// func HandEvalConv(cards string) {
+// 	c := []int{}
+
+// 	strs := strings.Split(cards, ",")
+
+// 	for _, card := range strs {
+
+// 	}
+
+// 	HandEval(c)
+// }
+
 func HandEval(cards []int) []int {
 
 	c := sliceToCards(cards)
@@ -106,11 +128,11 @@ func HandEval(cards []int) []int {
 	sf := [7]Card{}
 	copy(sf[:], c)
 
-	if result := StraightFlush(sf); result != nil {
+	if result := straightFlush(sf); result != nil {
 
 		return result
 
-	} else if result := FourOfaKind(a); result != nil {
+	} else if result := fourOfaKind(a); result != nil {
 
 		return result
 
@@ -149,7 +171,7 @@ func HandEval(cards []int) []int {
 }
 
 // 8
-func StraightFlush(c [7]Card) []int {
+func straightFlush(c [7]Card) []int {
 	//p("from sf", c)
 
 	searchIn := CardSlice(c).String()
@@ -201,7 +223,7 @@ func StraightFlush(c [7]Card) []int {
 }
 
 // 7
-func FourOfaKind(c [7]Card) []int {
+func fourOfaKind(c [7]Card) []int {
 	//p("from quads", c)
 	searchIn := CardSlice(c).String()
 	cards := s.Split(searchIn, "#")
@@ -441,15 +463,6 @@ func highCard(c [7]Card) []int {
 	}
 	//p("high card", sl)
 	return sl
-}
-
-func sliceToCards(cards []int) []Card {
-	c := make([]Card, 7)
-	for i := 0; i < 7; i++ {
-		c[i] = unshuffled[cards[i]]
-	}
-
-	return c
 }
 
 type winnerReply struct {
